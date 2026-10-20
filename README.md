@@ -1,28 +1,29 @@
 # Full-Stack E-Commerce Application
 
-A full-stack e-commerce application built with **React, Node.js, Express, and MongoDB**, featuring user authentication, product management, Stripe checkout, Cloudinary image hosting, order management, and real-time notifications.
+A full-stack e-commerce application built with **React, Node.js, Express, and MongoDB**, featuring user authentication, product management, Stripe Checkout, Cloudinary image hosting, order management, and real-time notifications.
 
 ## Features
 
-- **User Authentication** — User registration and login.
-- **Product Catalog** — Browse products and view individual product details.
-- **Shopping Cart** — Add products to a cart and manage selections before checkout.
-- **Secure Payments** — Stripe checkout and payment integration.
-- **Order Management** — Create and manage customer orders.
-- **Product Administration** — Create, update, and delete products through the admin functionality.
-- **Cloudinary Integration** — Upload and host product images using Cloudinary.
-- **Real-Time Notifications** — Notifications for user login and order status changes.
+- **User Authentication** - User registration and login.
+- **Product Catalog** - Browse products and view individual product details.
+- **Shopping Cart** - Add products to a cart and manage selections before checkout.
+- **Payments** - Stripe Checkout integration.
+- **Order Management** - Create and manage customer orders.
+- **Product Administration** - Create, update, and delete products through the admin functionality.
+- **Cloudinary Integration** - Upload and host product images using Cloudinary.
+- **Real-Time Notifications** - Notifications for user login and order status changes.
 
 ## Tech Stack
 
 | Area | Technologies |
 |---|---|
-| Frontend | React, JavaScript, HTML, CSS |
+| Frontend | React, JavaScript, HTML, CSS, Vite |
 | Backend | Node.js, Express.js |
-| Database | MongoDB |
-| Payments | Stripe |
+| Database | MongoDB, Mongoose |
+| Payments | Stripe Checkout |
 | Image Hosting | Cloudinary |
 | API Communication | REST APIs |
+| Real-Time Features | Socket.IO |
 
 ## Project Structure
 
@@ -41,12 +42,13 @@ full-stack-ecommerce/
 │   ├── routes/
 │   ├── services/
 │   ├── validations/
+│   ├── .env.example
 │   └── package.json
 ├── .gitignore
 └── README.md
 ```
 
-*The structure above highlights the main project directories; individual files may vary.*
+The structure above highlights the main project directories; individual files may vary.
 
 ## Getting Started
 
@@ -54,12 +56,10 @@ Follow these instructions to run the application locally.
 
 ### Prerequisites
 
-Install the following before starting:
-
-- [Node.js](https://nodejs.org/) and npm
+- [Node.js and npm](https://nodejs.org/)
 - [MongoDB](https://www.mongodb.com/) or a MongoDB Atlas database
-- A [Stripe](https://stripe.com/) account
-- A [Cloudinary](https://cloudinary.com/) account
+- A [Stripe](https://stripe.com/) account for test-mode checkout
+- A [Cloudinary](https://cloudinary.com/) account for image hosting
 
 ### 1. Clone the Repository
 
@@ -68,69 +68,95 @@ git clone https://github.com/ahmedemanaa58/full-stack-ecommerce.git
 cd full-stack-ecommerce
 ```
 
-### 2. Configure the Backend
+### 2. Configure and Start the Backend
 
-Navigate to the server directory and install dependencies:
+From the project root:
 
 ```bash
 cd server
 npm install
 ```
 
-Create a `.env` file inside the `server/` directory using the environment variables required by your backend.
+Create a local environment file from the example.
 
-Example placeholders:
+PowerShell:
 
-```dotenv
-PORT=YOUR_SERVER_PORT
-MONGODB_URI=YOUR_MONGODB_CONNECTION_STRING
-CLIENT_URL=YOUR_FRONTEND_URL
-
-STRIPE_SECRET_KEY=YOUR_STRIPE_TEST_SECRET_KEY
-
-CLOUDINARY_CLOUD_NAME=YOUR_CLOUDINARY_CLOUD_NAME
-CLOUDINARY_API_KEY=YOUR_CLOUDINARY_API_KEY
-CLOUDINARY_API_SECRET=YOUR_CLOUDINARY_API_SECRET
+```powershell
+Copy-Item .env.example .env
 ```
 
-Replace the placeholders with your own values. The variable names must match those referenced in your application code. If your project uses additional environment variables, add them as needed.
+macOS or Linux:
 
-**Security:** Use Stripe test-mode credentials during development. Never commit real API keys, passwords, database credentials, or `.env` files to GitHub.
+```bash
+cp .env.example .env
+```
 
-Start the backend using the development script defined in `server/package.json`. For example, if the script is named `dev`:
+Open `server/.env` and set values for your environment:
+
+```dotenv
+CONNECTION_STRING=mongodb://127.0.0.1:27017/ecommerce
+JWT_SECRET=replace_with_a_long_random_secret
+PAYMENT_SECRET=sk_test_replace_with_your_stripe_test_key
+CLIENT_URL=http://localhost:5173
+SERVER_URL=http://localhost:8080
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+These are example values for local development. Replace the placeholders with your own credentials. Use a Stripe test-mode secret key while developing. Never commit your real `.env` file or credentials to GitHub.
+
+Start the backend:
 
 ```bash
 npm run dev
 ```
 
-### 3. Configure the Frontend
+Keep this terminal running. Make sure the database connection and configured URLs match your local setup.
 
-Open a second terminal from the project root:
+### 3. Configure and Start the Frontend
+
+Open a **second terminal** at the project root:
 
 ```bash
 cd client
 npm install
 ```
 
-Configure the frontend environment variables in `client/.env` according to your existing `client/.env.example` and the variable names referenced in the React application.
+Create the frontend environment file from the example.
 
-For example, if the frontend uses Vite:
+PowerShell:
 
-```dotenv
-VITE_API_URL=YOUR_BACKEND_API_URL
+```powershell
+Copy-Item .env.example .env
 ```
 
-Use the correct variable prefix and name for your frontend build setup.
+macOS or Linux:
 
-Start the frontend using the script defined in `client/package.json`. For a Vite-based project:
+```bash
+cp .env.example .env
+```
+
+The example frontend configuration is:
+
+```dotenv
+VITE_API_URL=http://localhost:8080/api
+VITE_SERVER_URL=http://localhost:8080
+```
+
+Check that these URLs match your backend. Vite exposes variables prefixed with `VITE_` to frontend code, so do not put secrets in frontend environment variables.
+
+Start the frontend:
 
 ```bash
 npm run dev
 ```
 
-Open the local URL displayed in the terminal.
+Open the local URL printed by Vite in the terminal.
 
 ### 4. Test the Application
+
+After configuring the database and external services, try the following:
 
 - Register or log in with a test account.
 - Browse products and view product details.
@@ -140,35 +166,41 @@ Open the local URL displayed in the terminal.
 - Test order creation and order status updates.
 - Verify the relevant real-time notifications.
 
-Exact commands and environment variable names may depend on the scripts and configuration in your local project.
-
 ## Environment Variables
 
-The application uses environment variables to configure external services and local development settings.
+The example files are the best reference for the current local configuration. The backend variables documented here are:
 
 | Variable | Purpose |
 |---|---|
-| `PORT` | Backend server port |
-| `MONGODB_URI` | MongoDB connection string |
-| `CLIENT_URL` | Frontend origin, if used by the backend |
-| `STRIPE_SECRET_KEY` | Stripe server-side secret key |
+| `CONNECTION_STRING` | MongoDB connection string |
+| `JWT_SECRET` | Secret used to sign authentication tokens |
+| `PAYMENT_SECRET` | Stripe server-side secret key |
+| `CLIENT_URL` | Frontend origin used for checkout return URLs |
+| `SERVER_URL` | Backend origin used to build public URLs for locally stored images |
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary account cloud name |
 | `CLOUDINARY_API_KEY` | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
-| `VITE_API_URL` | Example frontend API URL for a Vite setup |
 
-These are illustrative names, not a guarantee that every variable matches your current code. Follow your project's actual configuration and example environment files.
+The frontend example uses:
+
+| Variable | Purpose |
+|---|---|
+| `VITE_API_URL` | Backend API base URL |
+| `VITE_SERVER_URL` | Backend origin used by the frontend for server-hosted resources |
+
+The names above match the environment variables identified in the project configuration reviewed for this README. If you change the code or deployment configuration, update the relevant example environment file and this documentation together.
 
 ## Security Notes
 
-- Keep environment files and credentials out of version control.
-- Use test credentials while developing payment functionality.
-- Keep secret API keys on the server; never expose them in frontend code.
-- Configure production credentials, access permissions, and deployment settings before going live.
+- Keep real `.env` files and credentials out of version control.
+- Use Stripe test-mode credentials during development.
+- Keep server-side secrets, including `PAYMENT_SECRET`, `JWT_SECRET`, and `CLOUDINARY_API_SECRET`, out of frontend code.
+- Only use placeholder values in `.env.example` files.
+- Configure production URLs, credentials, database access, and deployment settings before going live.
 
 ## Future Improvements
 
-Potential areas for further development include automated testing, production deployment, improved monitoring, and additional e-commerce features.
+Potential areas for further development include automated tests, production deployment, improved monitoring, and additional e-commerce features.
 
 ## Author
 
@@ -178,4 +210,4 @@ GitHub: [@ahmedemanaa58](https://github.com/ahmedemanaa58)
 
 ---
 
-*Built as a full-stack development project to practice frontend development, backend APIs, database integration, payment processing, image hosting, authentication, and order workflows.*
+Built as a full-stack development project to practice frontend development, backend APIs, database integration, payment processing, image hosting, authentication, and order workflows.
